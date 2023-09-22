@@ -388,9 +388,13 @@ class World:
 
 class ScrollingGroup:
 
-    def __init__(self, level, objects, hub_x, hub_y, left_boundary, right_boundary, upper_boundary, lower_boundary, x_velocity=0, y_velocity=0):
+    def __init__(self, level, objects, hub_x, hub_y, spawn_y, left_boundary, right_boundary, upper_boundary, lower_boundary, x_velocity=0, y_velocity=0, is_first=False):
 
         self.objects = objects
+
+        self.is_first = is_first
+
+        self.spawn_y = spawn_y
 
         self.hub_x = hub_x
         self.hub_y = hub_y
@@ -404,6 +408,9 @@ class ScrollingGroup:
         self.upper_boundary = upper_boundary
 
         self.level = level
+
+        self.can_be_summoned = True
+        self.can_summon = True
 
         if len(self.objects):
             i = 1
@@ -425,9 +432,16 @@ class ScrollingGroup:
 
         self.recalculate_rect()
 
-        if (self.big_rect.right < self.left_boundary) or (self.big_rect.left > self.right_boundary):
+        if self.big_rect.right == self.right_boundary:
+            if self.can_summon:
+                ScrollingGroup.spawn_new_scrolling_group(self.level)
+                self.can_summon = False
+
+        if self.big_rect.right < self.left_boundary:
             print("BOUNDARY BREACHED")
             self.teleport(self.hub_x, self.hub_y)
+            if not self.is_first:
+                self.can_be_summoned = True
 
     def teleport(self, x, y):
 
@@ -452,3 +466,28 @@ class ScrollingGroup:
             while i < len(self.objects):
                 self.big_rect = pygame.Rect.union(self.big_rect, self.objects[i].rect)
                 i = i + 1
+
+    @classmethod
+    def spawn_new_scrolling_group(cls, level):
+
+        if len(level.scrolling_groups):
+
+            candidates = 0
+            for sg in level.scrolling_groups:
+                if sg.can_be_summoned and not sg.is_first:
+                    candidates = candidates + 1
+
+            if candidates:
+
+                while True:
+
+                    random_num = random.randint(0, len(level.scrolling_groups)-1)
+
+                    if (not level.scrolling_groups[random_num].is_first) and level.scrolling_groups[random_num].can_be_summoned:
+
+                        level.scrolling_groups[random_num].teleport(level.scrolling_groups[random_num].right_boundary+random.randint(100, 200), level.scrolling_groups[random_num].spawn_y)
+                        level.scrolling_groups[random_num].x_velocity = level.scrolling_speed
+                        level.scrolling_groups[random_num].can_be_summoned = False
+                        level.scrolling_groups[random_num].can_summon = True
+                        print("DONE", level.scrolling_groups[random_num].big_rect.left)
+                        break
