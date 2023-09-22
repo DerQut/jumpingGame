@@ -4,11 +4,9 @@ from pygame.locals import *
 
 level = game.World(3200, 2560, 0.9, -640, -740, True, -0.5)
 
-player1 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 - 20), 780, 30, 60, (0, 0, 0),
-                      pygame.K_SPACE, pygame.K_a, pygame.K_d, pygame.K_LSHIFT, 1.2, 2.5, 0.03)
+player1 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 - 20), 780, 30, 60, (0, 0, 0), pygame.K_SPACE, pygame.K_a, pygame.K_d, pygame.K_LSHIFT, 1.2, 2.5, 0.03)
 
-player2 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 + 20), 780, 30, 60, (255, 255, 0),
-                      pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, 1.2, 2.5, 0.03)
+#player2 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 + 20), 780, 30, 60, (255, 255, 0), pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, 1.2, 2.5, 0.03)
 
 
 x = level.camera_pos_x
@@ -26,6 +24,7 @@ spawn_scrolling = game.ScrollingGroup(level, spawn_platform, 3000, 3000, 1520, 3
                                       0, 10000, level.scrolling_speed, 0, True)
 spawn_scrolling.can_be_summoned = False
 
+
 test_structure = [
     game.WorldObject(level, 0, 200, 450, 400, (40, 40, 40), 0),
 
@@ -39,9 +38,12 @@ test_structure = [
 
     game.JumpPad(level, 95, 180, 80, 20, (200, 200, 255), 4, True, 0),
     game.JumpPad(level, 275, 180, 80, 20, (200, 200, 255), 4, True, 0),
+    game.ScoreBubble(level, 110, 120, 25, 25, (50, 75, 255), 10),
+    game.ScoreBubble(level, 110, 80, 25, 25, (50, 75, 255), 10),
+    game.ScoreBubble(level, 110, 40, 25, 25, (50, 75, 255), 10),
 ]
 
-test_scrolling = game.ScrollingGroup(level, test_structure, 3000, 3000, 1440, 320, 2560, 0, 1000, level.scrolling_speed)
+test_scrolling = game.ScrollingGroup(level, test_structure, 3000, 3000, 1500, 320, 2560, 0, 1000, level.scrolling_speed)
 test_scrolling.teleport(test_scrolling.hub_x, test_scrolling.hub_y)
 
 
@@ -60,6 +62,10 @@ test_structure_copy = [
 
     game.JumpPad(level, 95, 180, 80, 20, (200, 200, 255), 4, True, 0),
     game.JumpPad(level, 275, 180, 80, 20, (200, 200, 255), 4, True, 0),
+
+    game.ScoreBubble(level, 110, 120, 25, 25, (50, 75, 255), 10),
+    game.ScoreBubble(level, 110, 80, 25, 25, (50, 75, 255), 10),
+    game.ScoreBubble(level, 110, 40, 25, 25, (50, 75, 255), 10),
 ]
 
 test_scrolling_copy = game.ScrollingGroup(level, test_structure_copy, 3000, 3000, 1520, 320, 2560, 0, 1000, level.scrolling_speed)

@@ -29,6 +29,25 @@ class Game:
                 for scrolling_group in world.scrolling_groups:
                     scrolling_group.move()
 
+                for world_object in world.world_objects:
+
+                    if world_object.obj_type == "player":
+                        if world_object.alive:
+                            world_object.score_sound_check()
+                            world_object.collision_check()
+                            world_object.walk()
+                            world_object.crouch()
+
+                    elif world_object.obj_type == "pad":
+                        if world_object.is_on:
+                            world_object.force_jump()
+
+                    elif world_object.obj_type == "danger":
+                        world_object.collide_kill()
+
+                    elif world_object.obj_type == "bubble":
+                        world_object.give_score()
+
                 world.render()
                 self.screen.blit(world.surface, (world.camera_pos_x, world.camera_pos_y))
 
@@ -50,20 +69,6 @@ class Game:
                             scrolling_group.teleport(320, 1600)
                             scrolling_group.x_velocity = -0.5
                         break
-
-        for player in Player.all_players:
-            if player.alive and player.world.active:
-                player.collision_check()
-                player.walk()
-                player.crouch()
-
-        for jump_pad in JumpPad.all_pads:
-            if jump_pad.world.active:
-                jump_pad.force_jump()
-
-        for danger in Danger.all_dangers:
-            if danger.world.active:
-                danger.collide_kill()
 
         pygame.display.update(pygame.rect.Rect(0, 0, 1920, 1080))
 
@@ -102,6 +107,10 @@ class WorldObject:
 
         self.can_gravity_pull = gravity
 
+        self.active = True
+
+        self.obj_type = "object"
+
         world.world_objects.append(self)
 
     def __repr__(self):
@@ -121,7 +130,7 @@ class WorldObject:
 
         for obj in self.world.world_objects:
 
-            if numpy.sign(obj.id) > 0:
+            if numpy.sign(obj.id) > 0 and obj.active:
 
                 if self.x_velocity > 0 and obj.rect.left >= self.rect.right:
                     if obj.rect.left - self.rect.right < x_space:
@@ -196,6 +205,14 @@ class Player(WorldObject):
         self.id = self.id * -1
 
         self.alive = True
+
+        self.score = 0
+
+        self.score_bubble_chain = 0
+
+        self.time_since_last_bubble = 1
+
+        self.obj_type = "player"
 
         Player.all_players.append(self)
 
@@ -302,23 +319,42 @@ class Player(WorldObject):
                     self.die()
                     break
 
+    def score_sound_check(self):
+
+        if self.time_since_last_bubble == 0:
+            if self.score_bubble_chain <= 15:
+                assets.sfx_score_bubble[self.score_bubble_chain-1].play()
+            else:
+                if self.score_bubble_chain%2 == 0:
+                    assets.sfx_score_bubble[13].play()
+                elif ((self.score_bubble_chain)-15)%4 == 0:
+                    assets.sfx_score_bubble[14].play()
+                else:
+                    assets.sfx_score_bubble[12].play()
+
+        elif self.time_since_last_bubble >= 100:
+            self.score_bubble_chain = 0
+
+        self.time_since_last_bubble = self.time_since_last_bubble+1
 
 class JumpPad(WorldObject):
 
     all_pads = []
 
-    def __init__(self, world, x_cord, y_cord, x_size, y_size, colour, jump_height, active=True, gravity=0, x_velocity=0, y_velocity=0):
+    def __init__(self, world, x_cord, y_cord, x_size, y_size, colour, jump_height, is_on=True, gravity=0, x_velocity=0, y_velocity=0):
         super().__init__(world, x_cord, y_cord, x_size, y_size, colour, gravity, x_velocity, y_velocity)
 
-        self.active = active
+        self.is_on = is_on
         self.jump_height = jump_height
+
+        self.obj_type = "pad"
 
         JumpPad.all_pads.append(self)
 
     def force_jump(self):
 
         for player in Player.all_players:
-            if self.active and ((abs(player.rect.bottom - self.rect.top) < 3 and self.jump_height > 0) or (abs(player.rect.top - self.rect.bottom) < 3 and self.jump_height < 0)):
+            if self.is_on and ((abs(player.rect.bottom - self.rect.top) < 3 and self.jump_height > 0) or (abs(player.rect.top - self.rect.bottom) < 3 and self.jump_height < 0)):
                 if (self.rect.left < player.rect.right < self.rect.right) or (self.rect.right > player.rect.left > self.rect.left):
                     player.y_velocity = -1 * self.jump_height * self.world.global_gravity
                     assets.play_random_sound(assets.sfx_pad)
@@ -328,11 +364,12 @@ class Danger(WorldObject):
 
     all_dangers = []
 
-    def __init__(self, world, x_cord, y_cord, x_size, y_size, type, colour, gravity=0, x_velocity=0, y_velocity=0):
+    def __init__(self, world, x_cord, y_cord, x_size, y_size, danger_type, colour, gravity=0, x_velocity=0, y_velocity=0):
         super().__init__(world, x_cord, y_cord, x_size, y_size, colour, gravity, x_velocity, y_velocity)
 
         self.id = self.id * -1
-        self.type = type
+        self.danger_type = danger_type
+        self.obj_type = "danger"
         Danger.all_dangers.append(self)
 
     def collide_kill(self):
@@ -342,9 +379,9 @@ class Danger(WorldObject):
                 if self.rect.colliderect(player.rect):
                     player.die()
 
-                    if self.type == "gas":
+                    if self.danger_type == "gas":
                         assets.play_random_sound(assets.sfx_death_gas)
-                    elif self.type == "spike":
+                    elif self.danger_type == "spike":
                         assets.play_random_sound(assets.sfx_stabbed)
 
 
@@ -383,7 +420,15 @@ class World:
             else:
                 obj.blind_move()
 
-            self.surface.fill(obj.colour, obj.rect)
+            if obj.active:
+                self.surface.fill(obj.colour, obj.rect)
+
+    def optimise(self):
+        for world_object in self.world_objects:
+            if (world_object.rect.right < self.camera_pos_x * -1) or (world_object.rect.left > self.camera_pos_x * -1 + 1920):
+                world_object.active = False
+            else:
+                world_object.active = True
 
 
 class ScrollingGroup:
@@ -485,9 +530,36 @@ class ScrollingGroup:
 
                     if (not level.scrolling_groups[random_num].is_first) and level.scrolling_groups[random_num].can_be_summoned:
 
-                        level.scrolling_groups[random_num].teleport(level.scrolling_groups[random_num].right_boundary+random.randint(100, 200), level.scrolling_groups[random_num].spawn_y)
+                        level.scrolling_groups[random_num].teleport(level.scrolling_groups[random_num].right_boundary+random.randint(75, 150), level.scrolling_groups[random_num].spawn_y)
                         level.scrolling_groups[random_num].x_velocity = level.scrolling_speed
                         level.scrolling_groups[random_num].can_be_summoned = False
                         level.scrolling_groups[random_num].can_summon = True
                         print("DONE", level.scrolling_groups[random_num].big_rect.left)
                         break
+
+# TODO: Score Multiplier
+
+class ScoreBubble(WorldObject):
+
+    all_bubbles = []
+
+    def __init__(self, world, x_cord, y_cord, x_size, y_size, colour, score, gravity=0, x_velocity=0, y_velocity=0):
+        super().__init__(world, x_cord, y_cord, x_size, y_size, colour, gravity, x_velocity, y_velocity)
+
+        self.score = score
+
+        self.id = self.id * -1
+
+        self.obj_type = "bubble"
+
+        ScoreBubble.all_bubbles.append(self)
+
+    def give_score(self):
+
+        for player in Player.all_players:
+            if self.rect.colliderect(player.rect) and player.alive and self.active:
+                player.score = player.score + self.score
+                player.score_bubble_chain = player.score_bubble_chain + 1
+                player.time_since_last_bubble = 0
+                self.active = False
+                print(player.score)

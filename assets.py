@@ -21,7 +21,7 @@ sfx_pad = [
     pygame.mixer.Sound("assets/sounds/bouncer_low_01.wav"),
     pygame.mixer.Sound("assets/sounds/bouncer_low_02.wav"),
     pygame.mixer.Sound("assets/sounds/bouncer_low_03.wav"),
-    pygame.mixer.Sound("assets/sounds/bouncer_low_04.wav"),
+    pygame.mixer.Sound("assets/sounds/bouncer_low_04.wav")
 ]
 
 sfx_death_gas = [
@@ -32,4 +32,22 @@ sfx_death_gas = [
 sfx_stabbed = [
     pygame.mixer.Sound("assets/sounds/stabbed_01.wav"),
     pygame.mixer.Sound("assets/sounds/stabbed_02.wav")
+]
+
+sfx_score_bubble = [
+    pygame.mixer.Sound("assets/sounds/Score_Bubble1.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble2.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble3.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble4.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble5.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble6.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble7.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble8.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble9.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble10.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble11.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble12.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble13.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble14.wav"),
+    pygame.mixer.Sound("assets/sounds/Score_Bubble15.wav"),
 ]
