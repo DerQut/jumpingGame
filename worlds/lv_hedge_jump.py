@@ -8,7 +8,7 @@ player1 = game.Player(level, 400, 780, 30, 60, (0, 0, 0),
                       pygame.K_SPACE, pygame.K_a, pygame.K_d, pygame.K_LSHIFT, 1.2, 2.5, 0.03)
 
 player2 = game.Player(level, 400, 780, 30, 60, (255, 255, 0),
-                      pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, 1.1, 2.5, 0.03)
+                      pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, 1.2, 2.5, 0.03)
 
 
 x = level.camera_pos_x
