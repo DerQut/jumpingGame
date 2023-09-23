@@ -22,8 +22,6 @@ class Game:
 
         self.screen.fill((128, 128, 128))
 
-
-
         for world in World.all:
 
             if world.active:
@@ -83,7 +81,7 @@ class WorldObject:
     all = []
     all_rects = []
 
-    def __init__(self, world, x_cord, y_cord, x_size, y_size, colour, gravity=0.01, x_velocity=0.00, y_velocity=0.00):
+    def __init__(self, world, x_cord, y_cord, x_size, y_size, colour, gravity=0.01, x_velocity=0.00, y_velocity=0.00, has_collision=True):
 
         self.world = world
 
@@ -103,6 +101,10 @@ class WorldObject:
         self.colour = colour
 
         self.id = len(WorldObject.all)
+
+        self.has_collision = has_collision
+        if not self.has_collision:
+            self.id = self.id * -1
 
         WorldObject.all.append(self)
         WorldObject.all_rects.append(self.rect)
@@ -164,7 +166,6 @@ class WorldObject:
             self.can_gravity_pull = False
             self.can_jump = True
             self.y_velocity = 0.00
-            self.x_velocity #?????
 
         if x_space == self.x_velocity:
             self.x_cord = self.x_cord + self.x_velocity
@@ -339,7 +340,7 @@ class Player(WorldObject):
                 else:
                     assets.sfx_score_bubble[12].play()
 
-        elif self.time_since_last_bubble == 150:
+        elif self.time_since_last_bubble == 100:
             print(self.score, self.score_multiplier, self.score_cache)
             self.score = self.score + self.score_cache * self.score_multiplier
             self.score_bubble_chain = 0
@@ -496,7 +497,7 @@ class ScrollingGroup:
 
         self.recalculate_rect()
 
-        if self.big_rect.right == self.right_boundary:
+        if 0 >= (self.big_rect.right - self.right_boundary) >= -1:
             if self.can_summon:
                 ScrollingGroup.spawn_new_scrolling_group(self.level)
                 self.can_summon = False
@@ -504,6 +505,7 @@ class ScrollingGroup:
         if self.big_rect.right < self.left_boundary:
             print("BOUNDARY BREACHED")
             self.teleport(self.hub_x, self.hub_y)
+            print(self.big_rect.right, self.left_boundary)
             if not self.is_first:
                 self.can_be_summoned = True
 
@@ -517,9 +519,6 @@ class ScrollingGroup:
             obj.y_cord = obj.y_cord + y_offset
 
             obj.rect.update(obj.x_cord, obj.y_cord, obj.x_size, obj.y_size)
-
-        if self.is_first:
-            self.objects = []
 
         self.recalculate_rect()
         self.x_velocity = 0
@@ -552,7 +551,7 @@ class ScrollingGroup:
 
                     if (not level.scrolling_groups[random_num].is_first) and level.scrolling_groups[random_num].can_be_summoned:
 
-                        level.scrolling_groups[random_num].teleport(level.scrolling_groups[random_num].right_boundary+random.randint(75, 150), level.scrolling_groups[random_num].spawn_y)
+                        level.scrolling_groups[random_num].teleport(level.scrolling_groups[random_num].right_boundary, level.scrolling_groups[random_num].spawn_y)
                         level.scrolling_groups[random_num].x_velocity = level.scrolling_speed
                         level.scrolling_groups[random_num].can_be_summoned = False
                         level.scrolling_groups[random_num].can_summon = True
