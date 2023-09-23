@@ -508,6 +508,7 @@ class ScrollingGroup:
             print(self.big_rect.right, self.left_boundary)
             if not self.is_first:
                 self.can_be_summoned = True
+                self.can_summon = False
 
     def teleport(self, x, y):
 
@@ -517,6 +518,10 @@ class ScrollingGroup:
         for obj in self.objects:
             obj.x_cord = obj.x_cord + x_offset
             obj.y_cord = obj.y_cord + y_offset
+
+            if obj.obj_type == "bubble":
+                obj.can_give_score = True
+                obj.active = True
 
             obj.rect.update(obj.x_cord, obj.y_cord, obj.x_size, obj.y_size)
 
@@ -538,24 +543,30 @@ class ScrollingGroup:
 
         if len(level.scrolling_groups):
 
-            candidates = 0
+            candidates = []
             for sg in level.scrolling_groups:
                 if sg.can_be_summoned and not sg.is_first:
-                    candidates = candidates + 1
+                    candidates.append(sg)
 
-            if candidates:
+            if len(candidates):
 
                 while True:
 
-                    random_num = random.randint(0, len(level.scrolling_groups)-1)
+                    random_num = random.randint(0, len(candidates)-1)
 
-                    if (not level.scrolling_groups[random_num].is_first) and level.scrolling_groups[random_num].can_be_summoned:
+                    if (not candidates[random_num].is_first) and candidates[random_num].can_be_summoned:
 
-                        level.scrolling_groups[random_num].teleport(level.scrolling_groups[random_num].right_boundary, level.scrolling_groups[random_num].spawn_y)
-                        level.scrolling_groups[random_num].x_velocity = level.scrolling_speed
-                        level.scrolling_groups[random_num].can_be_summoned = False
-                        level.scrolling_groups[random_num].can_summon = True
-                        print("DONE", level.scrolling_groups[random_num].big_rect.left)
+                        candidates[random_num].teleport(candidates[random_num].right_boundary, candidates[random_num].spawn_y)
+                        candidates[random_num].x_velocity = level.scrolling_speed
+                        candidates[random_num].can_be_summoned = False
+                        candidates[random_num].can_summon = True
+
+                        for obj in candidates[random_num].objects:
+                            if obj.obj_type == "bubble":
+                                obj.can_give_score = True
+                                obj.active = True
+
+                        print("DONE", candidates[random_num].big_rect.left, candidates[random_num].x_velocity)
                         break
 
 class ScoreBubble(WorldObject):
