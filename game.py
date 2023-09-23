@@ -26,27 +26,30 @@ class Game:
 
             if world.active:
 
+                world.optimise()
+
                 for scrolling_group in world.scrolling_groups:
                     scrolling_group.move()
 
                 for world_object in world.world_objects:
+                    if world_object.active:
 
-                    if world_object.obj_type == "player":
-                        if world_object.alive:
-                            world_object.score_sound_check()
-                            world_object.collision_check()
-                            world_object.walk()
-                            world_object.crouch()
+                        if world_object.obj_type == "player":
+                            if world_object.alive:
+                                world_object.score_sound_check()
+                                world_object.collision_check()
+                                world_object.walk()
+                                world_object.crouch()
 
-                    elif world_object.obj_type == "pad":
-                        if world_object.is_on:
-                            world_object.force_jump()
+                        elif world_object.obj_type == "pad":
+                            if world_object.is_on:
+                                world_object.force_jump()
 
-                    elif world_object.obj_type == "danger":
-                        world_object.collide_kill()
+                        elif world_object.obj_type == "danger":
+                            world_object.collide_kill()
 
-                    elif world_object.obj_type == "bubble":
-                        world_object.give_score()
+                        elif world_object.obj_type == "bubble":
+                            world_object.give_score()
 
                 world.render()
                 self.screen.blit(world.surface, (world.camera_pos_x, world.camera_pos_y))
@@ -207,9 +210,9 @@ class Player(WorldObject):
         self.alive = True
 
         self.score = 0
-
+        self.score_cache = 0
         self.score_bubble_chain = 0
-
+        self.score_multiplier = 1
         self.time_since_last_bubble = 1
 
         self.obj_type = "player"
@@ -322,20 +325,33 @@ class Player(WorldObject):
     def score_sound_check(self):
 
         if self.time_since_last_bubble == 0:
+            if self.score_bubble_chain%5 == 0 and self.score_bubble_chain:
+                self.score_multiplier = self.score_multiplier + 1
             if self.score_bubble_chain <= 15:
                 assets.sfx_score_bubble[self.score_bubble_chain-1].play()
             else:
-                if self.score_bubble_chain%2 == 0:
+                if self.score_bubble_chain % 2 == 0:
                     assets.sfx_score_bubble[13].play()
-                elif ((self.score_bubble_chain)-15)%4 == 0:
+                elif (self.score_bubble_chain-15) % 4 == 0:
                     assets.sfx_score_bubble[14].play()
                 else:
                     assets.sfx_score_bubble[12].play()
 
-        elif self.time_since_last_bubble >= 100:
+        elif self.time_since_last_bubble == 150:
+            print(self.score, self.score_multiplier, self.score_cache)
+            self.score = self.score + self.score_cache * self.score_multiplier
             self.score_bubble_chain = 0
+            self.score_cache = 0
+
+            if self.score_multiplier > 1:
+                assets.play_random_sound(assets.sfx_multiplier_end)
+
+            self.score_multiplier = 1
+
+            print(self.score)
 
         self.time_since_last_bubble = self.time_since_last_bubble+1
+
 
 class JumpPad(WorldObject):
 
@@ -425,10 +441,11 @@ class World:
 
     def optimise(self):
         for world_object in self.world_objects:
-            if (world_object.rect.right < self.camera_pos_x * -1) or (world_object.rect.left > self.camera_pos_x * -1 + 1920):
-                world_object.active = False
-            else:
-                world_object.active = True
+            if world_object.obj_type != "bubble":
+                if (world_object.rect.right < self.camera_pos_x * -1) or (world_object.rect.left > self.camera_pos_x * -1 + 1920):
+                    world_object.active = False
+                else:
+                    world_object.active = True
 
 
 class ScrollingGroup:
@@ -499,6 +516,9 @@ class ScrollingGroup:
 
             obj.rect.update(obj.x_cord, obj.y_cord, obj.x_size, obj.y_size)
 
+        if self.is_first:
+            self.objects = []
+
         self.recalculate_rect()
         self.x_velocity = 0
         self.y_velocity = 0
@@ -537,8 +557,6 @@ class ScrollingGroup:
                         print("DONE", level.scrolling_groups[random_num].big_rect.left)
                         break
 
-# TODO: Score Multiplier
-
 class ScoreBubble(WorldObject):
 
     all_bubbles = []
@@ -552,14 +570,16 @@ class ScoreBubble(WorldObject):
 
         self.obj_type = "bubble"
 
+        self.can_give_score = True
+
         ScoreBubble.all_bubbles.append(self)
 
     def give_score(self):
 
         for player in Player.all_players:
-            if self.rect.colliderect(player.rect) and player.alive and self.active:
-                player.score = player.score + self.score
+            if self.rect.colliderect(player.rect) and player.alive and self.can_give_score and player.world.active:
+                player.score_cache = player.score_cache + self.score
                 player.score_bubble_chain = player.score_bubble_chain + 1
                 player.time_since_last_bubble = 0
+                self.can_give_score = False
                 self.active = False
-                print(player.score)

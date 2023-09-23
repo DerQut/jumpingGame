@@ -51,3 +51,8 @@ sfx_score_bubble = [
     pygame.mixer.Sound("assets/sounds/Score_Bubble14.wav"),
     pygame.mixer.Sound("assets/sounds/Score_Bubble15.wav"),
 ]
+
+sfx_multiplier_end = [
+    pygame.mixer.Sound("assets/sounds/resource_time_out_2_01.wav"),
+    pygame.mixer.Sound("assets/sounds/resource_time_out_2_02.wav")
+]

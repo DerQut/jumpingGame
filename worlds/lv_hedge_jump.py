@@ -15,9 +15,11 @@ amount = 40
 
 spawn_platform = []
 
-while len(spawn_platform) < amount * 2:
+while len(spawn_platform) < amount * 3:
     spawn_platform.append(game.WorldObject(level, x, 1620, size+10, 40, (30, 30, 30), 0))
     spawn_platform.append(game.JumpPad(level, x+5, 1600, size, 20, (200, 200, 255), 4, True, 0))
+    spawn_platform.append(game.ScoreBubble(level, x+45, 1450, 25, 25, (50, 75, 255), 10))
+
     x = x + size + 5
 
 spawn_scrolling = game.ScrollingGroup(level, spawn_platform, 3000, 3000, 1520, 320, 2560,
