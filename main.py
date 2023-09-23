@@ -13,4 +13,6 @@ if __name__ == '__main__':
     session = game.Game(1920, 1080, DOUBLEBUF | FULLSCREEN)
 
     while session.running:
+        clock = pygame.time.Clock()
+        clock.tick(120)
         session.run()

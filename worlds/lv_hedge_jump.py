@@ -2,9 +2,9 @@ import game
 import pygame
 from pygame.locals import *
 
-level = game.World(3200, 2560, 0.9, -640, -740, True, -0.5)
+level = game.World(3200, 2560, 0.9, -640, -740, True, -1)
 
-player1 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 - 20), 780, 30, 60, (0, 0, 0), pygame.K_SPACE, pygame.K_a, pygame.K_d, pygame.K_LSHIFT, 1.2, 2.5, 0.03)
+player1 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 - 20), 780, 30, 60, (0, 0, 0), pygame.K_SPACE, pygame.K_a, pygame.K_d, pygame.K_LSHIFT, 3, 2.5, 0.25)
 
 #player2 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 + 20), 780, 30, 60, (255, 255, 0), pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, 1.2, 2.5, 0.03)
 
@@ -15,10 +15,9 @@ amount = 40
 
 spawn_platform = []
 
-while len(spawn_platform) < amount * 3:
+while len(spawn_platform) < amount * 2:
     spawn_platform.append(game.WorldObject(level, x, 1620, size+10, 40, (30, 30, 30), 0))
-    spawn_platform.append(game.JumpPad(level, x+5, 1600, size, 20, (200, 200, 255), 4, True, 0))
-    spawn_platform.append(game.ScoreBubble(level, x+45, 1450, 25, 25, (50, 75, 255), 10))
+    spawn_platform.append(game.JumpPad(level, x+5, 1600, size, 20, (200, 200, 255), 12, True, 0))
 
     x = x + size + 5
 
@@ -38,8 +37,9 @@ test_structure = [
     game.Danger(level, 185, 130, 80, 20, "spike", (240, 30, 30), 0),
     game.Danger(level, 365, 130, 80, 20, "spike", (240, 30, 30), 0),
 
-    game.JumpPad(level, 95, 180, 80, 20, (200, 200, 255), 4, True, 0),
-    game.JumpPad(level, 275, 180, 80, 20, (200, 200, 255), 4, True, 0),
+    game.JumpPad(level, 95, 180, 80, 20, (200, 200, 255), 12, True, 0),
+    game.JumpPad(level, 275, 180, 80, 20, (200, 200, 255), 12, True, 0),
+
     game.ScoreBubble(level, 110, 120, 25, 25, (50, 75, 255), 10),
     game.ScoreBubble(level, 110, 80, 25, 25, (50, 75, 255), 10),
     game.ScoreBubble(level, 110, 40, 25, 25, (50, 75, 255), 10),
@@ -62,8 +62,8 @@ test_structure_copy = [
     game.Danger(level, 185, 130, 80, 20, "spike", (240, 30, 30), 0),
     game.Danger(level, 365, 130, 80, 20, "spike", (240, 30, 30), 0),
 
-    game.JumpPad(level, 95, 180, 80, 20, (200, 200, 255), 4, True, 0),
-    game.JumpPad(level, 275, 180, 80, 20, (200, 200, 255), 4, True, 0),
+    game.JumpPad(level, 95, 180, 80, 20, (200, 200, 255), 12, True, 0),
+    game.JumpPad(level, 275, 180, 80, 20, (200, 200, 255), 12, True, 0),
 
     game.ScoreBubble(level, 110, 120, 25, 25, (50, 75, 255), 10),
     game.ScoreBubble(level, 110, 80, 25, 25, (50, 75, 255), 10),

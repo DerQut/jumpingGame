@@ -22,6 +22,8 @@ class Game:
 
         self.screen.fill((128, 128, 128))
 
+
+
         for world in World.all:
 
             if world.active:
