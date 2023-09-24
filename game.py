@@ -340,7 +340,7 @@ class Player(WorldObject):
                 else:
                     assets.sfx_score_bubble[12].play()
 
-        elif self.time_since_last_bubble == 100:
+        elif self.time_since_last_bubble == 90:
             print(self.score, self.score_multiplier, self.score_cache)
             self.score = self.score + self.score_cache * self.score_multiplier
             self.score_bubble_chain = 0
