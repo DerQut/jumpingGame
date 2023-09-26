@@ -1,6 +1,9 @@
 import random
 import pygame
 
+pygame.font.init()
+
+font = pygame.font.SysFont("Arial", 60)
 
 def play_random_sound(list):
     if len(list):

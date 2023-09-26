@@ -31,15 +31,18 @@ class Game:
                 for scrolling_group in world.scrolling_groups:
                     scrolling_group.move()
 
+                score_txt = []
+
                 for world_object in world.world_objects:
                     if world_object.active:
 
                         if world_object.obj_type == "player":
                             if world_object.alive:
-                                world_object.score_sound_check()
                                 world_object.collision_check()
                                 world_object.walk()
                                 world_object.crouch()
+                            world_object.score_sound_check()
+                            score_txt.append(assets.font.render(f"{world_object.score} + {world_object.score_multiplier} * {world_object.score_cache}", False, world_object.colour))
 
                         elif world_object.obj_type == "pad":
                             if world_object.is_on:
@@ -53,6 +56,8 @@ class Game:
 
                 world.render()
                 self.screen.blit(world.surface, (world.camera_pos_x, world.camera_pos_y))
+                self.screen.blit(score_txt[0], (50, 0))
+                self.screen.blit(score_txt[1], (50, 100))
 
                 break
 

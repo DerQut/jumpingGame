@@ -14,5 +14,5 @@ if __name__ == '__main__':
 
     while session.running:
         clock = pygame.time.Clock()
-        clock.tick(120)
+        clock.tick()
         session.run()

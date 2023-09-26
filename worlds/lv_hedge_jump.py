@@ -97,9 +97,9 @@ def bubble_struct():
 
 level = game.World(3200, 2560, 1, -640, -740, True, -4)
 
-player1 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 - 20), 780, 50, 100, (0, 0, 0), pygame.K_SPACE, pygame.K_a, pygame.K_d, pygame.K_LSHIFT, 5, 6, 0.25)
+player1 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 - 50), 780, 50, 100, (0, 0, 0), pygame.K_SPACE, pygame.K_a, pygame.K_d, pygame.K_LSHIFT, 5, 8, 0.25)
 
-#player2 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 + 20), 780, 30, 60, (255, 255, 0), pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, 1.2, 2.5, 0.03)
+player2 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 + 50), 780, 50, 100, (255, 255, 0), pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN, 5, 8, 0.25)
 
 danger_left = game.Danger(level, 640, 740, 40, 1080, "gas", (225, 20, 20), 0)
 danger_right = game.Danger(level, 2520, 740, 40, 1080, "gas", (225, 20, 20), 0)
@@ -110,7 +110,7 @@ BUBBLE_COLOUR = (200, 200, 220)
 PAD_SIZE_X = 100
 PAD_SIZE_Y = 20
 PAD_COLOUR = (220, 220, 255)
-PAD_STRENGTH = 13
+PAD_STRENGTH = 12.5
 
 PAD_SPAWN_Y = 1420
 
@@ -140,6 +140,7 @@ basic_bubble_platform_sg_1.teleport(basic_bubble_platform_sg_1.hub_x, basic_bubb
 
 basic_bubble_platform_sg_2 = game.ScrollingGroup(level, bubble_struct(), 3000, 3000, PAD_SPAWN_Y-75-3*(BUBBLE_SIZE+25), 640, 2560, 0, 1000, level.scrolling_speed)
 basic_bubble_platform_sg_1.teleport(basic_bubble_platform_sg_1.hub_x, basic_bubble_platform_sg_1.hub_y)
+
 
 basic_jump_platform_sg_1 = game.ScrollingGroup(level, basic_jump_struct(), 3000, 3000, PAD_SPAWN_Y-400, 640, 2560, 0, 1000, level.scrolling_speed)
 basic_jump_platform_sg_1.teleport(3000, 3000)
