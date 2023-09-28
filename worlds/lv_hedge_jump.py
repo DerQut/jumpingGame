@@ -5,28 +5,14 @@ from pygame.locals import *
 
 def basic_jump_struct():
     jump = [
-        game.WorldObject(level, 2 * (PAD_SIZE_X + 10), -225, 315, 650, FLOOR_COLOUR, 0),
+        game.WorldObject(level, 2 * (PAD_SIZE_X + 10), -200, 250, 650, (255, 255, 0), 0),
 
-        game.WorldObject(level, -5, PAD_SIZE_Y, 4 * (PAD_SIZE_X + 10) + 327, 40, FLOOR_COLOUR, 0),
+        game.WorldObject(level, -5, PAD_SIZE_Y, 4 * (PAD_SIZE_X + 10) + 265, 40, FLOOR_COLOUR, 0),
 
         game.JumpPad(level, 0, 0, PAD_SIZE_X, PAD_SIZE_Y, PAD_COLOUR, PAD_STRENGTH, True, 0),
         game.JumpPad(level, PAD_SIZE_X + 10, 0, PAD_SIZE_X, PAD_SIZE_Y, PAD_COLOUR, PAD_STRENGTH, True, 0),
-        game.JumpPad(level, 325 + 2 * (PAD_SIZE_X + 10), 0, PAD_SIZE_X, PAD_SIZE_Y, PAD_COLOUR, PAD_STRENGTH, True, 0),
-        game.JumpPad(level, 325 + 3 * (PAD_SIZE_X + 10), 0, PAD_SIZE_X, PAD_SIZE_Y, PAD_COLOUR, PAD_STRENGTH, True, 0),
-
-        game.ScoreBubble(level, 0.5 * (PAD_SIZE_X + 10) - BUBBLE_SIZE * 0.5, -150, BUBBLE_SIZE, BUBBLE_SIZE,
-                         BUBBLE_COLOUR, 10),
-        game.ScoreBubble(level, 1.25 * (PAD_SIZE_X + 10) - BUBBLE_SIZE * 0.5, -250, BUBBLE_SIZE, BUBBLE_SIZE,
-                         BUBBLE_COLOUR, 10),
-        game.ScoreBubble(level, 2 * (PAD_SIZE_X + 10), -350, BUBBLE_SIZE, BUBBLE_SIZE, BUBBLE_COLOUR, 10),
-        game.ScoreBubble(level, 2 * (PAD_SIZE_X + 10) + 0.5 * 315 - 0.5 * BUBBLE_SIZE, -400, BUBBLE_SIZE, BUBBLE_SIZE,
-                         BUBBLE_COLOUR, 10),
-        game.ScoreBubble(level, 2 * (PAD_SIZE_X + 10) + 295 - 0.5 * BUBBLE_SIZE, -350, BUBBLE_SIZE, BUBBLE_SIZE,
-                         BUBBLE_COLOUR, 10),
-        game.ScoreBubble(level, 325 + 2.75 * (PAD_SIZE_X + 10) - 10 - 0.5 * BUBBLE_SIZE, -250, BUBBLE_SIZE, BUBBLE_SIZE,
-                         BUBBLE_COLOUR, 10),
-        game.ScoreBubble(level, 325 + 3.5 * (PAD_SIZE_X + 10) - 0.5 * BUBBLE_SIZE, -150, BUBBLE_SIZE, BUBBLE_SIZE,
-                         BUBBLE_COLOUR, 10)
+        game.JumpPad(level, 260 + 2 * (PAD_SIZE_X + 10), 0, PAD_SIZE_X, PAD_SIZE_Y, PAD_COLOUR, PAD_STRENGTH, True, 0),
+        game.JumpPad(level, 260 + 3 * (PAD_SIZE_X + 10), 0, PAD_SIZE_X, PAD_SIZE_Y, PAD_COLOUR, PAD_STRENGTH, True, 0),
     ]
 
     return jump
@@ -57,7 +43,7 @@ def lamp_struct():
         game.ScoreBubble(level, 4 * (PAD_SIZE_X + 10), -112, BUBBLE_SIZE, BUBBLE_SIZE, BUBBLE_COLOUR, 10, 0),
 
         game.WorldObject(level, -5, PAD_SIZE_Y, 4 * (PAD_SIZE_X + 10), 40, FLOOR_COLOUR, 0),
-        game.WorldObject(level, -5 + 4 * (PAD_SIZE_X + 10), PAD_SIZE_Y, 3 * (PAD_SIZE_X + 10) + 1, 40, FLOOR_COLOUR, 0),
+        game.WorldObject(level, -5 + 4 * (PAD_SIZE_X + 10), PAD_SIZE_Y, 3 * (PAD_SIZE_X + 10), 40, FLOOR_COLOUR, 0),
 
         game.WorldObject(level, 2 * (PAD_SIZE_X + 10) - 5, -400, 3 * (PAD_SIZE_X + 10), 100, FLOOR_COLOUR, 0)
     ]
@@ -74,7 +60,7 @@ def bubble_struct():
         game.JumpPad(level, 5 * (PAD_SIZE_X + 10), 0, PAD_SIZE_X, PAD_SIZE_Y, PAD_COLOUR, PAD_STRENGTH, True, 0),
         game.JumpPad(level, 6 * (PAD_SIZE_X + 10), 0, PAD_SIZE_X, PAD_SIZE_Y, PAD_COLOUR, PAD_STRENGTH, True, 0),
 
-        game.WorldObject(level, -5, PAD_SIZE_Y, 7 * (PAD_SIZE_X + 10) + 5, 40, FLOOR_COLOUR, 0),
+        game.WorldObject(level, -5, PAD_SIZE_Y, 7 * (PAD_SIZE_X + 10)+5, 40, FLOOR_COLOUR, 0),
 
         game.ScoreBubble(level, 1.5 * PAD_SIZE_X + 10 - BUBBLE_SIZE * 0.5, -75, BUBBLE_SIZE, BUBBLE_SIZE, BUBBLE_COLOUR, 10),
         game.ScoreBubble(level, 1.5 * PAD_SIZE_X + 10 - BUBBLE_SIZE * 0.5, -75 - (BUBBLE_SIZE + 25), BUBBLE_SIZE, BUBBLE_SIZE, BUBBLE_COLOUR, 10),
@@ -95,7 +81,7 @@ def bubble_struct():
     return bubble
 
 
-level = game.World(3200, 2560, 1, -640, -740, True, -4)
+level = game.World(3200, 2560, 1.5, -640, -740, True, -4)
 
 player1 = game.Player(level, (abs(level.camera_pos_x) + 0.5*1920 - 50), 780, 50, 100, (0, 0, 0), pygame.K_SPACE, pygame.K_a, pygame.K_d, pygame.K_LSHIFT, 5, 8, 0.25)
 
@@ -110,7 +96,7 @@ BUBBLE_COLOUR = (200, 200, 220)
 PAD_SIZE_X = 100
 PAD_SIZE_Y = 20
 PAD_COLOUR = (220, 220, 255)
-PAD_STRENGTH = 12.5
+PAD_STRENGTH = 13.3
 
 PAD_SPAWN_Y = 1420
 
@@ -142,10 +128,10 @@ basic_bubble_platform_sg_2 = game.ScrollingGroup(level, bubble_struct(), 3000, 3
 basic_bubble_platform_sg_1.teleport(basic_bubble_platform_sg_1.hub_x, basic_bubble_platform_sg_1.hub_y)
 
 
-basic_jump_platform_sg_1 = game.ScrollingGroup(level, basic_jump_struct(), 3000, 3000, PAD_SPAWN_Y-400, 640, 2560, 0, 1000, level.scrolling_speed)
+basic_jump_platform_sg_1 = game.ScrollingGroup(level, basic_jump_struct(), 3000, 3000, PAD_SPAWN_Y-200, 640, 2560, 0, 1000, level.scrolling_speed)
 basic_jump_platform_sg_1.teleport(3000, 3000)
 
-basic_jump_platform_sg_2 = game.ScrollingGroup(level, basic_jump_struct(), 3000, 3000, PAD_SPAWN_Y-400, 640, 2560, 0, 1000, level.scrolling_speed)
+basic_jump_platform_sg_2 = game.ScrollingGroup(level, basic_jump_struct(), 3000, 3000, PAD_SPAWN_Y-200, 640, 2560, 0, 1000, level.scrolling_speed)
 basic_jump_platform_sg_2.teleport(3000, 3000)
 
 

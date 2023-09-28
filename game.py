@@ -37,12 +37,12 @@ class Game:
                     if world_object.active:
 
                         if world_object.obj_type == "player":
+                            world_object.collision_check()
+                            world_object.score_update()
+                            score_txt.append(assets.font.render(f"{world_object.score} + {world_object.score_multiplier} * {world_object.score_cache}", False, world_object.colour))
                             if world_object.alive:
-                                world_object.collision_check()
                                 world_object.walk()
                                 world_object.crouch()
-                            world_object.score_sound_check()
-                            score_txt.append(assets.font.render(f"{world_object.score} + {world_object.score_multiplier} * {world_object.score_cache}", False, world_object.colour))
 
                         elif world_object.obj_type == "pad":
                             if world_object.is_on:
@@ -330,7 +330,7 @@ class Player(WorldObject):
                     self.die()
                     break
 
-    def score_sound_check(self):
+    def score_update(self):
 
         if self.time_since_last_bubble == 0:
             if self.score_bubble_chain%5 == 0 and self.score_bubble_chain:
@@ -377,11 +377,12 @@ class JumpPad(WorldObject):
 
     def force_jump(self):
 
-        for player in Player.all_players:
-            if self.is_on and ((abs(player.rect.bottom - self.rect.top) < 3 and self.jump_height > 0) or (abs(player.rect.top - self.rect.bottom) < 3 and self.jump_height < 0)):
-                if (self.rect.left < player.rect.right < self.rect.right) or (self.rect.right > player.rect.left > self.rect.left):
-                    player.y_velocity = -1 * self.jump_height * self.world.global_gravity
-                    assets.play_random_sound(assets.sfx_pad)
+        if self.is_on and self.active:
+            for player in Player.all_players:
+                if (abs(player.rect.bottom - self.rect.top) < 3 and self.jump_height > 0) or (abs(player.rect.top - self.rect.bottom) < 3 and self.jump_height < 0):
+                    if (self.rect.left < player.rect.right < self.rect.right) or (self.rect.right > player.rect.left > self.rect.left):
+                        player.y_velocity = -1 * self.jump_height
+                        assets.play_random_sound(assets.sfx_pad)
 
 
 class Danger(WorldObject):
@@ -398,15 +399,17 @@ class Danger(WorldObject):
 
     def collide_kill(self):
 
-        for player in Player.all_players:
-            if player.alive:
-                if self.rect.colliderect(player.rect):
-                    player.die()
+        if self.active:
 
-                    if self.danger_type == "gas":
-                        assets.play_random_sound(assets.sfx_death_gas)
-                    elif self.danger_type == "spike":
-                        assets.play_random_sound(assets.sfx_stabbed)
+            for player in Player.all_players:
+                if player.alive:
+                    if self.rect.colliderect(player.rect):
+                        player.die()
+
+                        if self.danger_type == "gas":
+                            assets.play_random_sound(assets.sfx_death_gas)
+                        elif self.danger_type == "spike":
+                            assets.play_random_sound(assets.sfx_stabbed)
 
 
 class World:
@@ -502,7 +505,7 @@ class ScrollingGroup:
 
         self.recalculate_rect()
 
-        if 0 >= (self.big_rect.right - self.right_boundary) >= -1:
+        if 0 <= (self.big_rect.right - self.right_boundary) < abs(self.x_velocity):
             if self.can_summon:
                 ScrollingGroup.spawn_new_scrolling_group(self.level)
                 self.can_summon = False
